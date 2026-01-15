@@ -18,6 +18,10 @@ on:
         description: 'SHA256 for Linux x64'
         required: true
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   update-formula:
     runs-on: ubuntu-latest
