@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version (e.g., v0.1.3)'
+        description: 'Release version (e.g., v0.2.0)'
         required: true
       sha256_arm:
         description: 'SHA256 for macOS ARM64'
@@ -61,49 +61,49 @@ jobs:
           SHA256_LINUX: ${{ steps.vars.outputs.sha256_linux }}
         run: |
           VERSION_NUM="${VERSION#v}"
-          cat > Formula/transform-rules.rb << 'FORMULA_EOF'
-          class TransformRules < Formula
-            desc "CLI to transform CSV/JSON data using YAML rules"
-            homepage "https://github.com/vinhphatfsg/transform-rules-rs"
+          cat > Formula/rulemorph.rb << 'FORMULA_EOF'
+          class Rulemorph < Formula
+            desc "CLI for YAML-based declarative data transformation"
+            homepage "https://github.com/vinhphatfsg/rulemorph"
             version "VERSION_PLACEHOLDER"
             license "MIT"
 
             on_macos do
               on_arm do
-                url "https://github.com/vinhphatfsg/transform-rules-rs/releases/download/vVERSION_PLACEHOLDER/transform-rules-vVERSION_PLACEHOLDER-aarch64-apple-darwin.tar.gz"
+                url "https://github.com/vinhphatfsg/rulemorph/releases/download/vVERSION_PLACEHOLDER/rulemorph-vVERSION_PLACEHOLDER-aarch64-apple-darwin.tar.gz"
                 sha256 "SHA256_ARM_PLACEHOLDER"
               end
               on_intel do
-                url "https://github.com/vinhphatfsg/transform-rules-rs/releases/download/vVERSION_PLACEHOLDER/transform-rules-vVERSION_PLACEHOLDER-x86_64-apple-darwin.tar.gz"
+                url "https://github.com/vinhphatfsg/rulemorph/releases/download/vVERSION_PLACEHOLDER/rulemorph-vVERSION_PLACEHOLDER-x86_64-apple-darwin.tar.gz"
                 sha256 "SHA256_INTEL_PLACEHOLDER"
               end
             end
 
             on_linux do
               on_intel do
-                url "https://github.com/vinhphatfsg/transform-rules-rs/releases/download/vVERSION_PLACEHOLDER/transform-rules-vVERSION_PLACEHOLDER-x86_64-unknown-linux-gnu.tar.gz"
+                url "https://github.com/vinhphatfsg/rulemorph/releases/download/vVERSION_PLACEHOLDER/rulemorph-vVERSION_PLACEHOLDER-x86_64-unknown-linux-gnu.tar.gz"
                 sha256 "SHA256_LINUX_PLACEHOLDER"
               end
             end
 
             def install
-              bin.install "transform-rules"
-              bin.install "transform-rules-mcp"
+              bin.install "rulemorph"
+              bin.install "rulemorph-mcp"
             end
 
             test do
-              assert_match "transform-rules", shell_output("#{bin}/transform-rules --help")
+              assert_match "rulemorph", shell_output("#{bin}/rulemorph --help")
             end
           end
           FORMULA_EOF
 
-          sed -i "s/VERSION_PLACEHOLDER/${VERSION_NUM}/g" Formula/transform-rules.rb
-          sed -i "s/SHA256_ARM_PLACEHOLDER/${SHA256_ARM}/g" Formula/transform-rules.rb
-          sed -i "s/SHA256_INTEL_PLACEHOLDER/${SHA256_INTEL}/g" Formula/transform-rules.rb
-          sed -i "s/SHA256_LINUX_PLACEHOLDER/${SHA256_LINUX}/g" Formula/transform-rules.rb
+          sed -i "s/VERSION_PLACEHOLDER/${VERSION_NUM}/g" Formula/rulemorph.rb
+          sed -i "s/SHA256_ARM_PLACEHOLDER/${SHA256_ARM}/g" Formula/rulemorph.rb
+          sed -i "s/SHA256_INTEL_PLACEHOLDER/${SHA256_INTEL}/g" Formula/rulemorph.rb
+          sed -i "s/SHA256_LINUX_PLACEHOLDER/${SHA256_LINUX}/g" Formula/rulemorph.rb
 
           echo "Updated formula:"
-          cat Formula/transform-rules.rb
+          cat Formula/rulemorph.rb
 
       - name: Commit and push
         env:
@@ -111,6 +111,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Formula/transform-rules.rb
-          git commit -m "Update transform-rules to ${VERSION}"
+          git add Formula/rulemorph.rb
+          git commit -m "Update rulemorph to ${VERSION}"
           git push
