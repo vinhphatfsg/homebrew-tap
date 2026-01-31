@@ -17,6 +17,15 @@ on:
       sha256_linux:
         description: 'SHA256 for Linux x64'
         required: true
+      server_sha256_arm:
+        description: 'Server SHA256 for macOS ARM64'
+        required: true
+      server_sha256_intel:
+        description: 'Server SHA256 for macOS x64'
+        required: true
+      server_sha256_linux:
+        description: 'Server SHA256 for Linux x64'
+        required: true
 
 permissions:
   contents: write
@@ -35,22 +44,34 @@ jobs:
           PAYLOAD_SHA256_ARM: ${{ github.event.client_payload.sha256_arm }}
           PAYLOAD_SHA256_INTEL: ${{ github.event.client_payload.sha256_intel }}
           PAYLOAD_SHA256_LINUX: ${{ github.event.client_payload.sha256_linux }}
+          PAYLOAD_SERVER_SHA256_ARM: ${{ github.event.client_payload.server_sha256_arm }}
+          PAYLOAD_SERVER_SHA256_INTEL: ${{ github.event.client_payload.server_sha256_intel }}
+          PAYLOAD_SERVER_SHA256_LINUX: ${{ github.event.client_payload.server_sha256_linux }}
           # workflow_dispatch inputs
           INPUT_VERSION: ${{ github.event.inputs.version }}
           INPUT_SHA256_ARM: ${{ github.event.inputs.sha256_arm }}
           INPUT_SHA256_INTEL: ${{ github.event.inputs.sha256_intel }}
           INPUT_SHA256_LINUX: ${{ github.event.inputs.sha256_linux }}
+          INPUT_SERVER_SHA256_ARM: ${{ github.event.inputs.server_sha256_arm }}
+          INPUT_SERVER_SHA256_INTEL: ${{ github.event.inputs.server_sha256_intel }}
+          INPUT_SERVER_SHA256_LINUX: ${{ github.event.inputs.server_sha256_linux }}
         run: |
           if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
             echo "version=${PAYLOAD_VERSION}" >> $GITHUB_OUTPUT
             echo "sha256_arm=${PAYLOAD_SHA256_ARM}" >> $GITHUB_OUTPUT
             echo "sha256_intel=${PAYLOAD_SHA256_INTEL}" >> $GITHUB_OUTPUT
             echo "sha256_linux=${PAYLOAD_SHA256_LINUX}" >> $GITHUB_OUTPUT
+            echo "server_sha256_arm=${PAYLOAD_SERVER_SHA256_ARM}" >> $GITHUB_OUTPUT
+            echo "server_sha256_intel=${PAYLOAD_SERVER_SHA256_INTEL}" >> $GITHUB_OUTPUT
+            echo "server_sha256_linux=${PAYLOAD_SERVER_SHA256_LINUX}" >> $GITHUB_OUTPUT
           else
             echo "version=${INPUT_VERSION}" >> $GITHUB_OUTPUT
             echo "sha256_arm=${INPUT_SHA256_ARM}" >> $GITHUB_OUTPUT
             echo "sha256_intel=${INPUT_SHA256_INTEL}" >> $GITHUB_OUTPUT
             echo "sha256_linux=${INPUT_SHA256_LINUX}" >> $GITHUB_OUTPUT
+            echo "server_sha256_arm=${INPUT_SERVER_SHA256_ARM}" >> $GITHUB_OUTPUT
+            echo "server_sha256_intel=${INPUT_SERVER_SHA256_INTEL}" >> $GITHUB_OUTPUT
+            echo "server_sha256_linux=${INPUT_SERVER_SHA256_LINUX}" >> $GITHUB_OUTPUT
           fi
 
       - name: Update formula
@@ -59,6 +80,9 @@ jobs:
           SHA256_ARM: ${{ steps.vars.outputs.sha256_arm }}
           SHA256_INTEL: ${{ steps.vars.outputs.sha256_intel }}
           SHA256_LINUX: ${{ steps.vars.outputs.sha256_linux }}
+          SERVER_SHA256_ARM: ${{ steps.vars.outputs.server_sha256_arm }}
+          SERVER_SHA256_INTEL: ${{ steps.vars.outputs.server_sha256_intel }}
+          SERVER_SHA256_LINUX: ${{ steps.vars.outputs.server_sha256_linux }}
         run: |
           VERSION_NUM="${VERSION#v}"
           cat > Formula/rulemorph.rb << 'FORMULA_EOF'
@@ -102,8 +126,50 @@ jobs:
           sed -i "s/SHA256_INTEL_PLACEHOLDER/${SHA256_INTEL}/g" Formula/rulemorph.rb
           sed -i "s/SHA256_LINUX_PLACEHOLDER/${SHA256_LINUX}/g" Formula/rulemorph.rb
 
+          cat > Formula/rulemorph-server.rb << 'FORMULA_EOF'
+          class RulemorphServer < Formula
+            desc "HTTP server for rulemorph UI and API"
+            homepage "https://github.com/vinhphatfsg/rulemorph"
+            version "VERSION_PLACEHOLDER"
+            license "MIT"
+
+            on_macos do
+              on_arm do
+                url "https://github.com/vinhphatfsg/rulemorph/releases/download/vVERSION_PLACEHOLDER/rulemorph-server-vVERSION_PLACEHOLDER-aarch64-apple-darwin.tar.gz"
+                sha256 "SERVER_SHA256_ARM_PLACEHOLDER"
+              end
+              on_intel do
+                url "https://github.com/vinhphatfsg/rulemorph/releases/download/vVERSION_PLACEHOLDER/rulemorph-server-vVERSION_PLACEHOLDER-x86_64-apple-darwin.tar.gz"
+                sha256 "SERVER_SHA256_INTEL_PLACEHOLDER"
+              end
+            end
+
+            on_linux do
+              on_intel do
+                url "https://github.com/vinhphatfsg/rulemorph/releases/download/vVERSION_PLACEHOLDER/rulemorph-server-vVERSION_PLACEHOLDER-x86_64-unknown-linux-gnu.tar.gz"
+                sha256 "SERVER_SHA256_LINUX_PLACEHOLDER"
+              end
+            end
+
+            def install
+              bin.install "rulemorph-server"
+            end
+
+            test do
+              assert_match "rulemorph", shell_output("#{bin}/rulemorph-server --help")
+            end
+          end
+          FORMULA_EOF
+
+          sed -i "s/VERSION_PLACEHOLDER/${VERSION_NUM}/g" Formula/rulemorph-server.rb
+          sed -i "s/SERVER_SHA256_ARM_PLACEHOLDER/${SERVER_SHA256_ARM}/g" Formula/rulemorph-server.rb
+          sed -i "s/SERVER_SHA256_INTEL_PLACEHOLDER/${SERVER_SHA256_INTEL}/g" Formula/rulemorph-server.rb
+          sed -i "s/SERVER_SHA256_LINUX_PLACEHOLDER/${SERVER_SHA256_LINUX}/g" Formula/rulemorph-server.rb
+
           echo "Updated formula:"
           cat Formula/rulemorph.rb
+          echo ""
+          cat Formula/rulemorph-server.rb
 
       - name: Commit and push
         env:
@@ -111,6 +177,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Formula/rulemorph.rb
+          git add Formula/rulemorph.rb Formula/rulemorph-server.rb
           git commit -m "Update rulemorph to ${VERSION}"
           git push
