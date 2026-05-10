@@ -1,24 +1,24 @@
 class Rulemorph < Formula
   desc "CLI for YAML-based declarative data transformation"
   homepage "https://github.com/vinhphatfsg/rulemorph"
-  version "0.2.3"
+  version "0.3.0"
   license "MIT"
 
   on_macos do
     on_arm do
-      url "https://github.com/vinhphatfsg/rulemorph/releases/download/v0.2.3/rulemorph-v0.2.3-aarch64-apple-darwin.tar.gz"
-      sha256 "53c04fc0007ce437f282705db9bb1233890455fb4eb134b213d75611ca623721"
+      url "https://github.com/vinhphatfsg/rulemorph/releases/download/v0.3.0/rulemorph-v0.3.0-aarch64-apple-darwin.tar.gz"
+      sha256 "c4f37eda2191da1e77c83014ab76685c63a0b63406c896540644710f2c29f651"
     end
     on_intel do
-      url "https://github.com/vinhphatfsg/rulemorph/releases/download/v0.2.3/rulemorph-v0.2.3-x86_64-apple-darwin.tar.gz"
-      sha256 "01d107eccf049429bca830454cfa391b9e01e628db23b24b4d28ae3e6a64d03b"
+      url "https://github.com/vinhphatfsg/rulemorph/releases/download/v0.3.0/rulemorph-v0.3.0-x86_64-apple-darwin.tar.gz"
+      sha256 "08cabc22840a21f88c25e8ae800100fbc35deede9c3ee80ae5cbc55e40088dd7"
     end
   end
 
   on_linux do
     on_intel do
-      url "https://github.com/vinhphatfsg/rulemorph/releases/download/v0.2.3/rulemorph-v0.2.3-x86_64-unknown-linux-gnu.tar.gz"
-      sha256 "adba42713af4c1fedbfd5f2b956dadab35792562d98fa0222561c89d20e00b09"
+      url "https://github.com/vinhphatfsg/rulemorph/releases/download/v0.3.0/rulemorph-v0.3.0-x86_64-unknown-linux-gnu.tar.gz"
+      sha256 "d9e5b1f35a2283f5f1161da10c79067e0f598e1b54183be8a0694d797ed26eba"
     end
   end
 
