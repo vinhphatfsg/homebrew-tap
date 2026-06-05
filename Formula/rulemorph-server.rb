@@ -1,24 +1,24 @@
 class RulemorphServer < Formula
   desc "HTTP server for rulemorph UI and API"
   homepage "https://github.com/vinhphatfsg/rulemorph"
-  version "0.3.2"
+  version "0.3.3"
   license "MIT"
 
   on_macos do
     on_arm do
-      url "https://github.com/vinhphatfsg/rulemorph/releases/download/v0.3.2/rulemorph-server-v0.3.2-aarch64-apple-darwin.tar.gz"
-      sha256 "4c37668a5225bb6b0babccb9271d5d77c33682df0ef1d513d21b46795250d411"
+      url "https://github.com/vinhphatfsg/rulemorph/releases/download/v0.3.3/rulemorph-server-v0.3.3-aarch64-apple-darwin.tar.gz"
+      sha256 "2d7da744b89fbf4814e847313de20ce6d620cb9a8d88db67c1eb35a907dbe165"
     end
     on_intel do
-      url "https://github.com/vinhphatfsg/rulemorph/releases/download/v0.3.2/rulemorph-server-v0.3.2-x86_64-apple-darwin.tar.gz"
-      sha256 "636ee10ed5b89d780bcfda394ce9b20ea428fc65c5d246a09827edbf9478d3f2"
+      url "https://github.com/vinhphatfsg/rulemorph/releases/download/v0.3.3/rulemorph-server-v0.3.3-x86_64-apple-darwin.tar.gz"
+      sha256 "0691f0c2ad82f9eacc98464c7ed5df96c5f5b2794c7ca7d444f1c7401734368e"
     end
   end
 
   on_linux do
     on_intel do
-      url "https://github.com/vinhphatfsg/rulemorph/releases/download/v0.3.2/rulemorph-server-v0.3.2-x86_64-unknown-linux-gnu.tar.gz"
-      sha256 "bfe1fa1d5e5bcf9b51b5ad643435f4217e739b0dac01f41c495603377d2f2b91"
+      url "https://github.com/vinhphatfsg/rulemorph/releases/download/v0.3.3/rulemorph-server-v0.3.3-x86_64-unknown-linux-gnu.tar.gz"
+      sha256 "86ab1448a03cba55a4a4d4b8fecc0bc8738dcaafb109dc0a7a5c79f7d8c607e7"
     end
   end
 
